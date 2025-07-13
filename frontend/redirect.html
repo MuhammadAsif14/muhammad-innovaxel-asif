@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting...</title>
+</head>
+<body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    if (code) {
+      fetch(`http://localhost:5000/shorten/${code}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            document.body.innerHTML = "<h2>Short URL not found</h2>";
+          }
+        });
+    } else {
+      document.body.innerHTML = "<h2>Invalid or missing short code</h2>";
+    }
+  </script>
+</body>
+</html>

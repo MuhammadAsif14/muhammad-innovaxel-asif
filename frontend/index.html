@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Shortener</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>URL Shortener</h1>
+
+    <!-- Shorten URL Form -->
+    <form id="shorten-form">
+      <input type="text" id="url-input" placeholder="Enter long URL..." required />
+      <button type="submit">Shorten</button>
+    </form>
+
+    <!-- Result -->
+    <div id="result" class="hidden">
+      <p>Short URL:</p>
+      <a href="#" id="short-url" target="_blank"></a>
+    </div>
+
+    <!-- Get Stats Form -->
+    <form id="stats-form">
+      <input type="text" id="stats-code" placeholder="Enter short code..." required />
+      <button type="submit">Get Stats</button>
+    </form>
+
+    <div id="stats-result" class="hidden">
+      <h3>Statistics</h3>
+      <pre id="stats-output"></pre>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('shorten-form');
+    const result = document.getElementById('result');
+    const shortUrl = document.getElementById('short-url');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = document.getElementById('url-input').value;
+
+      const res = await fetch('http://localhost:5000/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        const fullShortUrl = `${window.location.origin}/redirect.html?code=${data.shortCode}`;
+        shortUrl.href = fullShortUrl;
+        shortUrl.textContent = fullShortUrl;
+        result.classList.remove('hidden');
+      } else {
+        alert(data.error || 'Something went wrong');
+      }
+    });
+
+    const statsForm = document.getElementById('stats-form');
+    const statsOutput = document.getElementById('stats-output');
+    const statsResult = document.getElementById('stats-result');
+
+    statsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('stats-code').value;
+
+      const res = await fetch(`http://localhost:5000/shorten/${code}/stats`);
+      const data = await res.json();
+
+      if (res.ok) {
+        statsOutput.textContent = JSON.stringify(data, null, 2);
+        statsResult.classList.remove('hidden');
+      } else {
+        alert(data.error || 'Stats not found');
+      }
+    });
+  </script>
+</body>
+</html>
