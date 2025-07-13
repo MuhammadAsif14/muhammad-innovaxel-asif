@@ -4,12 +4,14 @@ const {
   createShortUrl,
   getOriginalUrl,
   updateUrl,
-  deleteUrl
+  deleteUrl,
+  getStats
 } = require('../controllers/urlController');
 
 router.post('/', createShortUrl);
 router.get('/:shortCode', getOriginalUrl);
 router.put('/:shortCode', updateUrl);
-router.delete('/:shortCode', deleteUrl); 
+router.delete('/:shortCode', deleteUrl);
+router.get('/:shortCode/stats', getStats); 
 
 module.exports = router;
