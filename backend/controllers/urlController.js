@@ -59,3 +59,18 @@ exports.updateUrl = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+exports.deleteUrl = async (req, res) => {
+  const { shortCode } = req.params;
+
+  try {
+    const result = await Url.findOneAndDelete({ shortCode });
+
+    if (!result) {
+      return res.status(404).json({ error: 'Short URL not found' });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
