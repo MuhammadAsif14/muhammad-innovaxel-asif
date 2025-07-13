@@ -34,3 +34,28 @@ exports.getOriginalUrl = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+exports.updateUrl = async (req, res) => {
+  const { shortCode } = req.params;
+  const { url } = req.body;
+
+  if (!url) {
+    return res.status(400).json({ error: 'URL is required' });
+  }
+
+  try {
+    const urlEntry = await Url.findOne({ shortCode });
+
+    if (!urlEntry) {
+      return res.status(404).json({ error: 'Short URL not found' });
+    }
+
+    urlEntry.url = url;
+    urlEntry.updatedAt = new Date();
+
+    await urlEntry.save();
+
+    res.status(200).json(urlEntry);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
